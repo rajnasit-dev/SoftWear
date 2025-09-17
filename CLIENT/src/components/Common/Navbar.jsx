@@ -62,7 +62,7 @@ const Navbar = () => {
         {/** Right - Icons */}
         <div className="flex items-center gap-6">
           {/** User icon */}
-          <Link to="/profile">
+          <Link to="/login">
             <HiOutlineUser className="h-6 w-6 text-gray-700 hover:text-black" />
           </Link>
           {/** Cart icon */}
