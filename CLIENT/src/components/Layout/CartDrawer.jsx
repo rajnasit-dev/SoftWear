@@ -1,13 +1,19 @@
 import React, { useState } from "react";
 import { IoMdClose } from "react-icons/io";
-import CartContents from '../Cart/CartContents'
+import CartContents from "../Cart/CartContents";
+import { useNavigate } from 'react-router-dom'
 
-const CartDrawer = ({isDrawerOpen, toggleCartDrawer}) => {
+const CartDrawer = ({ isDrawerOpen, toggleCartDrawer }) => {
+  const navigate = useNavigate();
+  const handleCheckout = () => {
+    navigate("/checkout");
+    toggleCartDrawer();
+  }
 
   return (
     <div
       className={`fixed top-0 right-0 w-[70%] md:w-2/4 lg:w-1/4 h-full bg-white shadow-2xl transform transition-transform duration-300 flex flex-col z-50 ${
-        isDrawerOpen ? "translate-x-0" : "translate-x-full"//moves the drawer to right full = 100%
+        isDrawerOpen ? "translate-x-0" : "translate-x-full" //moves the drawer to right full = 100%
       }`}
     >
       {/* Close Button  */}
@@ -25,8 +31,15 @@ const CartDrawer = ({isDrawerOpen, toggleCartDrawer}) => {
 
       {/* Checkout button fixed at the bottom  */}
       <div className="p-4 bg-white sticky bottom-0">
-        <button className=" w-full font-semibold bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 cursor-pointer transition">Checkout</button>
-        <p className="text-xs text-gray-500 mt-2">Shipping, taxes, and discount codes calculated at checkout.</p>
+        <button
+          onClick={handleCheckout}
+          className=" w-full font-semibold bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 cursor-pointer transition"
+        >
+          Checkout
+        </button>
+        <p className="text-xs text-gray-500 mt-2">
+          Shipping, taxes, and discount codes calculated at checkout.
+        </p>
       </div>
     </div>
   );
