@@ -7,11 +7,18 @@ import {
 } from "react-icons/hi2";
 import SearchBar from "./SearchBar";
 import CartDrawer from "../Layout/CartDrawer";
-import {IoMdClose} from 'react-icons/io';
+import { IoMdClose } from "react-icons/io";
+import { useSelector } from "react-redux";
 
 const Navbar = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isNavOpen, setIsNavOpen] = useState(false);
+
+  const { cart } = useSelector((state) => state.cart);
+  const { user } = useSelector((state) => state.auth);
+
+  const cartItemCount =
+    cart?.products?.reduce((acc, product) => acc + product.quantity, 0) || 0;
 
   const toggleNavDrawer = () => {
     setIsNavOpen(!isNavOpen);
@@ -26,7 +33,7 @@ const Navbar = () => {
       <nav className="container mx-auto flex items-center justify-between py-4">
         {/** Left - Logo */}
         <div>
-          <Link to="/" className="text-2xl font-bold tracking-wider" >
+          <Link to="/" className="text-2xl font-bold tracking-wider">
             SoftWear
           </Link>
         </div>
@@ -34,25 +41,25 @@ const Navbar = () => {
         {/** Center - Navigation links */}
         <div className="hidden md:flex gap-6">
           <Link
-            to="/collections/all"
+            to="/collections/all?gender=Men"
             className="text-gray-700 hover:text-black tet-sm font-medium uppercase"
           >
             Men
           </Link>
           <Link
-            to="#"
+            to="/collections/all?gender=Women"
             className="text-gray-700 hover:text-black tet-sm font-medium uppercase"
           >
             Women
           </Link>
           <Link
-            to="#"
+            to="/collections/all?category=Top Wear"
             className="text-gray-700 hover:text-black tet-sm font-medium uppercase"
           >
             Top Wear
           </Link>
           <Link
-            to="#"
+            to="/collections/all?category=Bottom Wear"
             className="text-gray-700 hover:text-black tet-sm font-medium uppercase"
           >
             Bottom Wear
@@ -62,7 +69,15 @@ const Navbar = () => {
         {/** Right - Icons */}
         <div className="flex items-center gap-6">
           {/* Adminn Button */}
-          <Link to="/admin" className="block bg-black px-4 py-1 rounded text-white hover:bg-gray-800 transition-colors">Admin</Link>
+          {user && user.role === "admin" && (
+            <Link
+              to="/admin"
+              className="block bg-black px-4 py-1 rounded text-white hover:bg-gray-800 transition-colors"
+            >
+              Admin
+            </Link>
+          )}
+
           {/** User icon */}
           <Link to="/login">
             <HiOutlineUser className="h-6 w-6 text-gray-700 hover:text-black" />
@@ -73,14 +88,20 @@ const Navbar = () => {
             className="relative cursor-pointer"
           >
             <HiOutlineShoppingBag className="h-6 w-6 text-gray-700 hover:text-black" />
-            <span className="absolute -top-2 bg-primaryRed text-white text-sx rounded-full px-2">
-              5
-            </span>
+            {cartItemCount > 0 && (
+              <div className="absolute top-0 right-0 flex items-center justify-center h-4 w-4 bg-primaryRed text-white text-xs rounded-full">
+                {cartItemCount}
+              </div>
+            )}
           </button>
+
           {/** Serach */}
           <SearchBar />
           {/** Menu icon */}
-          <button onClick={toggleNavDrawer} className="md:hidden cursor-pointer">
+          <button
+            onClick={toggleNavDrawer}
+            className="md:hidden cursor-pointer"
+          >
             <HiBars3BottomRight className="h-6 w-6 text-gray-700  hover:text-black" />
           </button>
         </div>
@@ -105,10 +126,34 @@ const Navbar = () => {
         <div className="p-4">
           <h2 className="text-xl font-semibold mb-4">Menu</h2>
           <nav className="space-y-4">
-            <Link to="#" onClick={toggleNavDrawer} className="block text-gray-600 focus:text-black">Men</Link>
-            <Link to="#" onClick={toggleNavDrawer} className="block text-gray-600 focus:text-black">Women</Link>
-            <Link to="#" onClick={toggleNavDrawer} className="block text-gray-600 focus:text-black">Upper Wear</Link>
-            <Link to="#" onClick={toggleNavDrawer} className="block text-gray-600 focus:text-black">Bottom Wear</Link>
+            <Link
+              to="/collections/all?gender=Men"
+              onClick={toggleNavDrawer}
+              className="block text-gray-600 focus:text-black"
+            >
+              Men
+            </Link>
+            <Link
+              to="/collections/all?gender=Women"
+              onClick={toggleNavDrawer}
+              className="block text-gray-600 focus:text-black"
+            >
+              Women
+            </Link>
+            <Link
+              to="/collections/all?category=Top Wear"
+              onClick={toggleNavDrawer}
+              className="block text-gray-600 focus:text-black"
+            >
+              Top Wear
+            </Link>
+            <Link
+              to="/collections/all?category=Bottom Wear"
+              onClick={toggleNavDrawer}
+              className="block text-gray-600 focus:text-black"
+            >
+              Bottom Wear
+            </Link>
           </nav>
         </div>
       </div>

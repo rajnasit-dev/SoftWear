@@ -1,15 +1,26 @@
-import React, { useState } from "react";
-import { TbPassword } from "react-icons/tb";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { fetchUsers, addUser, deleteUser, updateUser } from "../../redux/slices/adminSlice";
 
 const UserManagement = () => {
-  const users = [
-    {
-      _id: "12312",
-      name: "John Doe",
-      email: "john27@gmail.com",
-      role: "admin",
-    },
-  ];
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { user } = useSelector((state) => state.auth);
+  const { users, loading, error } = useSelector((state) => state.admin);
+
+  useEffect(() => {
+    if (user && user.role !== "admin") {
+      navigate("/");
+    }
+  }, [user, navigate]);
+
+  useEffect(()=>{
+    if(user && user.role === "admin") {
+      dispatch(fetchUsers());
+    }
+  }, [dispatch, users])
 
   const [formData, setFormData] = useState({
     name: "",
@@ -22,8 +33,9 @@ const UserManagement = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
     e.preventDefault();
+    dispatch(addUser(formData));
     //Reset the form after submission
     setFormData({
       name: "",
@@ -34,19 +46,20 @@ const UserManagement = () => {
   };
 
   const handleRoleChange = (userId, newRole) => {
-    console.log(userId, newRole);
+    dispatch(updateUser({id: userId, role: newRole}));
   };
 
   const handleDeleteUser = (userId) => {
-    if(window.confirm("Are you sure, You want to delete this user?")) {
-        console.log(userId);
+    if (window.confirm("Are you sure, You want to delete this user?")) {
+      dispatch(deleteUser(userId));
     }
-  }
+  };
 
   return (
     <div className="max-w-7xl mx-auto p-6">
       <h2 className="text-2xl font-bold mb-6">User Managemnet</h2>
-
+      {loading && <p>Loading</p>}
+      {error && <p>Error: {error}</p>}
       {/* Add New User Form */}
       <div className="p-6 rounded-lg mb-6">
         <h3 className="text-lg font-bold mb-4">Add New User</h3>
@@ -78,7 +91,7 @@ const UserManagement = () => {
             <input
               type="text"
               name="password"
-              value={formData.name}
+              value={formData.password}
               onChange={handleChange}
               className="w-full p-2 border rounded"
               required
@@ -137,7 +150,9 @@ const UserManagement = () => {
                   <button
                     onClick={() => handleDeleteUser(user._id)}
                     className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors"
-                  >Delete</button>
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}
