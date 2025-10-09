@@ -30,7 +30,7 @@ export const addUser = createAsyncThunk(
       );
       return resp.data;
     } catch (error) {
-      rejectWithValue(error.response?.data || {message: "Unknown error"});
+      rejectWithValue(error.response?.data || { message: "Unknown error" });
     }
   }
 );
@@ -79,6 +79,7 @@ const adminSlice = createSlice({
       //Fetch all the Users
       .addCase(fetchUsers.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(fetchUsers.fulfilled, (state, action) => {
         state.loading = false;
@@ -121,4 +122,4 @@ const adminSlice = createSlice({
   },
 });
 
-export default adminSlice.reducer
+export default adminSlice.reducer;

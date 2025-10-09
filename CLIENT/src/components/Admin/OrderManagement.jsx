@@ -78,7 +78,7 @@ const OrderManagement = () => {
               ))
             ) : (
               <tr>
-                <td colSpan={5}>No Order Found.</td>
+                <td colSpan={5} className="p-4 text-center text-gray-500">No Orders Found</td>
               </tr>
             )}
           </tbody>

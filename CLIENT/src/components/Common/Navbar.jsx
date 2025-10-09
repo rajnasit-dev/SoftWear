@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   HiOutlineUser,
@@ -42,25 +42,25 @@ const Navbar = () => {
         <div className="hidden md:flex gap-6">
           <Link
             to="/collections/all?gender=Men"
-            className="text-gray-700 hover:text-black tet-sm font-medium uppercase"
+            className="text-gray-700 hover:text-black text-sm font-medium uppercase"
           >
             Men
           </Link>
           <Link
             to="/collections/all?gender=Women"
-            className="text-gray-700 hover:text-black tet-sm font-medium uppercase"
+            className="text-gray-700 hover:text-black text-sm font-medium uppercase"
           >
             Women
           </Link>
           <Link
             to="/collections/all?category=Top Wear"
-            className="text-gray-700 hover:text-black tet-sm font-medium uppercase"
+            className="text-gray-700 hover:text-black text-sm font-medium uppercase"
           >
             Top Wear
           </Link>
           <Link
             to="/collections/all?category=Bottom Wear"
-            className="text-gray-700 hover:text-black tet-sm font-medium uppercase"
+            className="text-gray-700 hover:text-black text-sm font-medium uppercase"
           >
             Bottom Wear
           </Link>
@@ -79,7 +79,7 @@ const Navbar = () => {
           )}
 
           {/** User icon */}
-          <Link to="/login">
+          <Link to={user?.userId ? "/profile" : "/login"}>
             <HiOutlineUser className="h-6 w-6 text-gray-700 hover:text-black" />
           </Link>
           {/** Cart icon */}
