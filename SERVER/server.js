@@ -23,7 +23,7 @@ const port = process.env.PORT;
 connectDB();
 
 app.get("/", (req, res)=>{
-    res.send("Welcome To Rabbit API!");
+    res.send("Welcome To SoftWear API (A clothing ecommerce web app).");
 });
 
 // API Routes
