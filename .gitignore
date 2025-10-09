@@ -1,5 +1,11 @@
-# Ignore node_modules everywhere
-**/node_modules/
+#logs
+logs
+*.logs
 
-# Ignore env files everywhere
-**/.env
+# Node Modules
+CLIENT/node_modules/
+SERVER/node_modules/
+
+#Environment variables
+CLIENT/.env
+SERVER/.env
