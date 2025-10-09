@@ -9,3 +9,6 @@ SERVER/node_modules/
 #Environment variables
 CLIENT/.env
 SERVER/.env
+
+# dist 
+CLIENT/dist/
