@@ -12,12 +12,12 @@ const FilterSidebar = () => {
     material: [],
     brand: [],
     minPrice: 0,
-    maxPrice: 100,
+    maxPrice: 5000,
   });
 
-  const [priceRange, setPriceRange] = useState([0, 100]);
+  const [priceRange, setPriceRange] = useState([0, 5000]);
 
-  const categories = ["Top wear", "Bottom Wear"];
+  const categories = ["Top Wear", "Bottom Wear"];
 
   const colors = [
     "Red",
@@ -66,9 +66,9 @@ const FilterSidebar = () => {
       material: params.material ? params.material.split(",") : [],
       brand: params.brand ? params.brand.split(",") : [],
       minPrice: params.minPrice || 0,
-      maxPrice: params.maxPrice || 100,
+      maxPrice: params.maxPrice || 5000,
     });
-    setPriceRange([0, params.maxPrice || 100]);
+    setPriceRange([0, params.maxPrice || 5000]);
   }, [searchParams]);
 
   const handleFilterChange = (e) => {
@@ -111,7 +111,7 @@ const FilterSidebar = () => {
 
   return (
     <div className="p-4">
-      <h3 className="text-xl font-medium text-gray-800 mb-4">Filter</h3>
+      <h3 className="text-xl font-medium text-gray-800 mb-4 shadow-2xl">Filter</h3>
 
       {/* Category Filter */}
       <div className="mb-6">
@@ -160,7 +160,7 @@ const FilterSidebar = () => {
               value={color}
               onClick={handleFilterChange}
               className={`w-8 h-8 rounded-full border border-gray-300 cursor-pointer transition hover:scale-105 ${
-                filters.color ? "ring-2 ring-blue-500" : ""
+                filters.color.includes(color) ? "ring-2 ring-blue-500" : ""
               }`}
               style={{ backgroundColor: color.toLowerCase() }}
             ></button>
@@ -231,14 +231,14 @@ const FilterSidebar = () => {
           type="range"
           name="priceRange"
           min={0}
-          max={100}
+          max={5000}
           value={priceRange[1]}
           onChange={handlePriceChange}
           className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer"
         />
         <div className="flex justify-between text-gray-600 mt-2">
-          <span>$0</span>
-          <span>${priceRange[1]}</span>
+          <span>₹0</span>
+          <span>₹{priceRange[1]}</span>
         </div>
       </div>
     </div>

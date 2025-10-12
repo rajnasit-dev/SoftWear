@@ -30,80 +30,85 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="container mx-auto flex items-center justify-between py-4">
-        {/** Left - Logo */}
-        <div>
-          <Link to="/" className="text-2xl font-bold tracking-wider">
-            SoftWear
-          </Link>
-        </div>
+      <nav className="w-full flex items-center justify-center bg-gray-100">
+        {/* Parent container with max-width and padding */}
+        <div className="container mx-auto px-10 py-2">
+          <div className="flex items-center justify-between">
+            {/** Left - Logo */}
+            <div>
+              <Link to="/" className="text-2xl font-bold tracking-wider">
+                SoftWear
+              </Link>
+            </div>
 
-        {/** Center - Navigation links */}
-        <div className="hidden md:flex gap-6">
-          <Link
-            to="/collections/all?gender=Men"
-            className="text-gray-700 hover:text-black text-sm font-medium uppercase"
-          >
-            Men
-          </Link>
-          <Link
-            to="/collections/all?gender=Women"
-            className="text-gray-700 hover:text-black text-sm font-medium uppercase"
-          >
-            Women
-          </Link>
-          <Link
-            to="/collections/all?category=Top Wear"
-            className="text-gray-700 hover:text-black text-sm font-medium uppercase"
-          >
-            Top Wear
-          </Link>
-          <Link
-            to="/collections/all?category=Bottom Wear"
-            className="text-gray-700 hover:text-black text-sm font-medium uppercase"
-          >
-            Bottom Wear
-          </Link>
-        </div>
+            {/** Center - Navigation links */}
+            <div className="hidden md:flex gap-6">
+              <Link
+                to="/collections/all?gender=Men"
+                className="text-gray-700 hover:text-black text-sm font-medium uppercase"
+              >
+                Men
+              </Link>
+              <Link
+                to="/collections/all?gender=Women"
+                className="text-gray-700 hover:text-black text-sm font-medium uppercase"
+              >
+                Women
+              </Link>
+              <Link
+                to="/collections/all?category=Top Wear"
+                className="text-gray-700 hover:text-black text-sm font-medium uppercase"
+              >
+                Top Wear
+              </Link>
+              <Link
+                to="/collections/all?category=Bottom Wear"
+                className="text-gray-700 hover:text-black text-sm font-medium uppercase"
+              >
+                Bottom Wear
+              </Link>
+            </div>
 
-        {/** Right - Icons */}
-        <div className="flex items-center gap-6">
-          {/* Adminn Button */}
-          {user && user.role === "admin" && (
-            <Link
-              to="/admin"
-              className="block bg-black px-4 py-1 rounded text-white hover:bg-gray-800 transition-colors"
-            >
-              Admin
-            </Link>
-          )}
+            {/** Right - Icons */}
+            <div className="flex items-center gap-6">
+              {/* Adminn Button */}
+              {user && user.role === "admin" && (
+                <Link
+                  to="/admin"
+                  className="block bg-black px-4 py-1 rounded text-white hover:bg-gray-800 transition-colors"
+                >
+                  Admin
+                </Link>
+              )}
 
-          {/** User icon */}
-          <Link to={user?.userId ? "/profile" : "/login"}>
-            <HiOutlineUser className="h-6 w-6 text-gray-700 hover:text-black" />
-          </Link>
-          {/** Cart icon */}
-          <button
-            onClick={toggleCartDrawer}
-            className="relative cursor-pointer"
-          >
-            <HiOutlineShoppingBag className="h-6 w-6 text-gray-700 hover:text-black" />
-            {cartItemCount > 0 && (
-              <div className="absolute top-0 right-0 flex items-center justify-center h-4 w-4 bg-primaryRed text-white text-xs rounded-full">
-                {cartItemCount}
-              </div>
-            )}
-          </button>
+              {/** User icon */}
+              <Link to={user?.userId ? "/profile" : "/login"}>
+                <HiOutlineUser className="h-6 w-6 text-gray-700 hover:text-black" />
+              </Link>
+              {/** Cart icon */}
+              <button
+                onClick={toggleCartDrawer}
+                className="relative cursor-pointer"
+              >
+                <HiOutlineShoppingBag className="h-6 w-6 text-gray-700 hover:text-black" />
+                {cartItemCount > 0 && (
+                  <div className="absolute top-0 right-0 flex items-center justify-center h-4 w-4 bg-primaryRed text-white text-xs rounded-full">
+                    {cartItemCount}
+                  </div>
+                )}
+              </button>
 
-          {/** Serach */}
-          <SearchBar />
-          {/** Menu icon */}
-          <button
-            onClick={toggleNavDrawer}
-            className="md:hidden cursor-pointer"
-          >
-            <HiBars3BottomRight className="h-6 w-6 text-gray-700  hover:text-black" />
-          </button>
+              {/** Serach */}
+              <SearchBar />
+              {/** Menu icon */}
+              <button
+                onClick={toggleNavDrawer}
+                className="md:hidden cursor-pointer"
+              >
+                <HiBars3BottomRight className="h-6 w-6 text-gray-700  hover:text-black" />
+              </button>
+            </div>
+          </div>
         </div>
       </nav>
 

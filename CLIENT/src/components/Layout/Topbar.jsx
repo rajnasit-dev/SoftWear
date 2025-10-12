@@ -4,8 +4,9 @@ import {RiTwitterXLine} from 'react-icons/ri'
 
 const Topbar = () => {
   return (
-    <div className="bg-primaryRed text-white">
-      <div className="container mx-auto flex justify-between py-3">
+    <div className="w-full flex items-center justify-center bg-primaryRed">
+    <div className="container mx-auto py-2 px-10  text-white">
+      <div className=" flex items-center justify-between">
         {/** Icons */}
         <div className="hidden md:flex items-center gap-4">
           <a href="#" className="hover:text-gray-300">
@@ -27,6 +28,7 @@ const Topbar = () => {
             <a href="tel:+1234567890" className="hover:text-gray-300">+91 8452688521</a>
         </div>
       </div>
+    </div>
     </div>
   );
 };
