@@ -77,7 +77,7 @@ const NewArrivals = () => {
 
   return (
     <section className="py-16 px-14 lg:px-0">
-      <div className="container mx-auto text-center mb-10 relative">
+      <div className="container mx-auto max-w-screen-xl  text-center mb-10 relative">
         <h2 className="text-3xl font-bold mb-4">Explore New Arrivals</h2>
         <p className="text-lg text-gray-600 mb-8">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Culpa numquam

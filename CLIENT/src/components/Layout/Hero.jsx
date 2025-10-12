@@ -1,7 +1,13 @@
 import heroImg from "../../assets/hero.webp";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Hero = () => {
+    const navigate = useNavigate();
+
+  const naviToAllCollection = ()=>{
+    navigate('/collections/all');
+  }
+
   return (
     <section className="relative">
       <img
@@ -18,12 +24,12 @@ const Hero = () => {
           <p className="text-sm tracking-tighter md:text-lg mb-6">
             Explore our vacation ready outfits with fast worldwide shipping.
           </p>
-          <Link
-            to="#"
+          <button
+            onClick={naviToAllCollection}
             className="bg-white hover:bg-gray-200 transition-colors text-zinc-800 px-6 py-2 rounded-4xl text-lg font-semibold"
           >
             Shop Now
-          </Link>
+          </button>
         </div>
       </div>
     </section>

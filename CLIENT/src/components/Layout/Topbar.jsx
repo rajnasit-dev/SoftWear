@@ -4,8 +4,8 @@ import {RiTwitterXLine} from 'react-icons/ri'
 
 const Topbar = () => {
   return (
-    <div className="w-full flex items-center justify-center bg-primaryRed">
-    <div className="container mx-auto py-2 px-10  text-white">
+    <div className=" bg-primaryRed">
+    <div className="container mx-auto py-2 px-10 text-white">
       <div className=" flex items-center justify-between">
         {/** Icons */}
         <div className="hidden md:flex items-center gap-4">

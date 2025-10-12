@@ -30,7 +30,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="w-full flex items-center justify-center bg-gray-100">
+      <nav className="bg-gray-100">
         {/* Parent container with max-width and padding */}
         <div className="container mx-auto px-10 py-2">
           <div className="flex items-center justify-between">
