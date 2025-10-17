@@ -3,11 +3,12 @@ import {
   createAsyncThunk,
   createSlice,
 } from "@reduxjs/toolkit";
+import axios from "axios";
 
 //Fetch all orders
 export const fetchAllOrders = createAsyncThunk(
   "adminOrders/fetchAllOrders",
-  async (__DO_NOT_USE__ActionTypes, { RejecteWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
       const resp = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/api/admin/orders`,
@@ -19,7 +20,7 @@ export const fetchAllOrders = createAsyncThunk(
       );
       return resp.data;
     } catch (error) {
-      return RejecteWithValue(error.resp.data);
+      return rejectWithValue(error.response?.data || { message: "Failed to fetch orders" });
     }
   }
 );
@@ -27,7 +28,7 @@ export const fetchAllOrders = createAsyncThunk(
 //Update orders Status
 export const updateOrderStatus = createAsyncThunk(
   "adminOrders/updateOrderStatus",
-  async ({ id, status }, { RejecteWithValue }) => {
+  async ({ id, status }, { rejectWithValue }) => {
     try {
       const resp = await axios.put(
         `${import.meta.env.VITE_BACKEND_URL}/api/admin/orders/${id}`,
@@ -40,7 +41,7 @@ export const updateOrderStatus = createAsyncThunk(
       );
       return resp.data;
     } catch (error) {
-      return RejecteWithValue(error.resp.data);
+      return rejectWithValue(error.response?.data || { message: "Failed to update order status" });
     }
   }
 );
@@ -48,7 +49,7 @@ export const updateOrderStatus = createAsyncThunk(
 //Delete an orders
 export const deleteOrder = createAsyncThunk(
   "adminOrders/deleteOrder",
-  async (id, { RejecteWithValue }) => {
+  async (id, { rejectWithValue }) => {
     try {
       await axios.delete(
         `${import.meta.env.VITE_BACKEND_URL}/api/admin/orders/${id}`,
@@ -60,7 +61,7 @@ export const deleteOrder = createAsyncThunk(
       );
       return id;
     } catch (error) {
-      return RejecteWithValue(error.resp.data);
+      return rejectWithValue(error.response?.data || { message: "Failed to delete order" });
     }
   }
 );

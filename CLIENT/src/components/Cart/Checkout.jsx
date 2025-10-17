@@ -131,6 +131,8 @@ const Checkout = () => {
   //Verify Razorpay Payment
   const verifyPayment = async (id, response) => {
     try {
+      console.log('Verifying payment for checkout ID:', id);
+      
       await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/checkout/${id}/verify-payment`,
         {
@@ -145,6 +147,8 @@ const Checkout = () => {
         }
       );
 
+      console.log('Payment verified successfully, finalizing checkout...');
+
       // Finalize checkout after successful payment
       const finalizeResponse = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/checkout/${id}/finalize`,
@@ -156,12 +160,15 @@ const Checkout = () => {
         }
       );
 
+      console.log('Checkout finalized, order created:', finalizeResponse.data);
+
       // Store the final order in localStorage for order confirmation page
       localStorage.setItem('finalOrder', JSON.stringify(finalizeResponse.data));
       
       // Clear cart after successful payment
       dispatch(clearCart());
 
+      console.log('Navigating to order confirmation page...');
       navigate("/order-confirmation");
     } catch (error) {
       console.error("Payment verification failed:", error);

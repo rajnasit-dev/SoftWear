@@ -6,16 +6,27 @@ import {clearCart} from '../redux/slices/cartSlice'
 
 const OrderConfirmationPage = () => {
   const [order, setOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
   const navigate = useNavigate(); 
 
   //Get order from localStorage
   useEffect(() => {
     const finalOrder = localStorage.getItem('finalOrder');
+    console.log('Final order from localStorage:', finalOrder); // Debug log
+    
     if (finalOrder) {
-      setOrder(JSON.parse(finalOrder));
-      localStorage.removeItem('finalOrder'); // Clean up after use
+      try {
+        const parsedOrder = JSON.parse(finalOrder);
+        setOrder(parsedOrder);
+        localStorage.removeItem('finalOrder'); // Clean up after use
+        setLoading(false);
+      } catch (error) {
+        console.error('Error parsing final order:', error);
+        navigate('/my-orders');
+      }
     } else {
+      console.log('No final order found in localStorage, redirecting to my-orders');
       navigate('/my-orders');
     }
   }, [navigate]);
@@ -26,6 +37,17 @@ const OrderConfirmationPage = () => {
     orderDate.setDate(orderDate.getDate() + 10); //Add 10 days to the orderDate
     return orderDate.toLocaleDateString();
   };
+
+  if (loading) {
+    return (
+      <div className="max-w-4xl mx-auto p-6 bg-white">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-emerald-700 mb-4">Loading your order confirmation...</h1>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-700 mx-auto"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white">
