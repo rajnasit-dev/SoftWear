@@ -2,6 +2,18 @@
 
 🚀 **Live Website:** 👉 [https://softwear-rajnasit-dev.vercel.app](https://softwear-rajnasit-dev.vercel.app)
 
+## 📸 Screenshots
+
+### 🎨 Project UI Preview
+
+| 🏠 Home Page | 👕 Product Page | 🛒 Cart Page |
+|:-------------:|:---------------:|:-------------:|
+| ![Home Page](./screenshots/home.png) <br> *Homepage showing featured products* | ![Product Page](./screenshots/product.png) <br> *Individual product details and add-to-cart option* | ![Cart Page](./screenshots/cart.png) <br> *Cart summary with selected items and total price* |
+
+| 💳 Checkout Page | 👤 Profile Page | 🧑‍💼 Admin Dashboard |
+|:----------------:|:----------------:|:--------------------:|
+| ![Checkout](./screenshots/checkout.png) <br> *Checkout page with payment options* | ![Profile](./screenshots/profile.png) <br> *User profile showing personal info and orders* | ![Admin Dashboard](./screenshots/admin-dashboard.png) <br> *Admin panel to manage products and orders* |
+
 
 ## 📌 Project Description
 This is a full-stack e-commerce website built using the **MERN** stack – MongoDB, Express.js, React.js, and Node.js. Users can browse products, add them to the cart, and complete orders using a payment integration. The project follows best practices and covers both backend and frontend development.
@@ -29,16 +41,3 @@ This is a full-stack e-commerce website built using the **MERN** stack – Mongo
 ```bash
 git clone https://github.com/yourusername/SoftWear.git
 cd SoftWear
-
-
-## 📸 Screenshots
-
-### 🎨 Project UI Preview
-
-| 🏠 Home Page | 👕 Product Page | 🛒 Cart Page |
-|:-------------:|:---------------:|:-------------:|
-| ![Home Page](./screenshots/home.png) | ![Product Page](./screenshots/product.png) | ![Cart Page](./screenshots/cart.png) |
-
-| 💳 Checkout Page | 🧑‍💼 Profile Page | 🧑‍💼 Admin Dashboard |
-|:----------------:|:----------------:|:--------------------:|
-| ![Checkout](./screenshots/checkout.png) | ![Checkout](./screenshots/profile.png) | ![Admin Dashboard](./screenshots/admin-dashboard.png) |
