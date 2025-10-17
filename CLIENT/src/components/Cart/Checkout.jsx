@@ -3,13 +3,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 // import PaypalButton from "./PaypalButton";
 import {createCheckout} from '../../redux/slices/checkoutSlice'
+import { clearCart } from '../../redux/slices/cartSlice'
+import { toast } from "sonner";
+import axios from "axios";
 
 const Checkout = () => {
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
-  const { cart, loading, error } = useSelector((state) => state.cart);
+  const { cart, loading: cartLoading, error: cartError } = useSelector((state) => state.cart);
+  const { loading: checkoutLoading, error: checkoutError } = useSelector((state) => state.checkout || {});
   const { user } = useSelector((state) => state.auth);
 
   const [checkoutId, setCheckoutId] = useState(null);
@@ -23,54 +27,68 @@ const Checkout = () => {
     phone: "",
   });
 
-  //Ensure cart is not laoded before proceeding
+  //Prevent checkout if cart is empty
   useEffect(() => {
-    if (!cart || !cart.products || cart.products === 0) {
+    if (!cart || !cart.products || cart.products.length === 0) {
       navigate("/");
     }
   }, [cart, navigate]);
 
+  //Create checkout session
   const handleCreateCheckout = async (e) => {
     e.preventDefault();
+    if (!user) {
+      navigate(`/login?redirect=${encodeURIComponent("/checkout")}`);
+      return;
+    }
+
+    if (!window.Razorpay) {
+      toast.error("Payment SDK not loaded. Please retry in a moment.");
+      return;
+    }
+
     if (cart && cart.products.length > 0) {
+      const mappedItems = cart.products.map((p) => ({
+        productId: p.productId,
+        name: p.name,
+        image: p.image || p.Image,
+        price: Number(p.price),
+        quantity: p.quantity,
+        size: p.size,
+        color: p.color,
+      }));
+
+      // quick client-side validation to avoid 500s on server
+      const missingImage = mappedItems.find((i) => !i.image);
+      if (missingImage) {
+        toast.error("Some items are missing images. Please refresh your cart.");
+        return;
+      }
+
       const res = await dispatch(
         createCheckout({
-          checkoutItems: cart.products,
+          checkoutItems: mappedItems,
           shippingAddress,
-          paymentMethod: "Paypal",
+          paymentMethod: "Razorpay",
           totalPrice: cart.totalPrice,
         })
       );
+
       if (res.payload && res.payload._id) {
-        setCheckoutId(res.payload._id); // Set checkout ID if checkout was successful
+        setCheckoutId(res.payload._id);
+        handleRazorpayPayment(res.payload._id);
+      } else if (res.error) {
+        toast.error(res.payload?.message || "Failed to create checkout.");
       }
     }
   };
 
-  const handlePaymentSuccess = async (details) => {
+//Initialize Razorpay payment
+  const handleRazorpayPayment = async (id) => {
     try {
-      const resp = await axios.put(
-        `${import.meta.env.VITE_BACKEND_URL}/api/checkout/${checkoutId}/pay`,
-        { paymentStatus: "paid", paymentDetails: details },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
-          },
-        }
-      );
-      await handleFinalizeCheckout(checkoutId);
-    } catch (error) {
-      console.error(error);
-    }
-    navigate("/order-confirmation");
-  };
-
-  const handleFinalizeCheckout = async (checkoutId) => {
-    try {
-      const resp = await axios.post(
-        `${
-          import.meta.env.VITE_BACKEND_URL
-        }/api/checkout/${checkoutId}/finalize`,
+      // Create Razorpay order in backend
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/checkout/${id}/create-order`,
         {},
         {
           headers: {
@@ -78,14 +96,83 @@ const Checkout = () => {
           },
         }
       );
-      navigate("/order-confirmation");
-    } catch (error) {}
+
+      const options = {
+        key: data.key, // Razorpay key_id from backend
+        amount: data.amount,
+        currency: data.currency,
+        name: "ElectroMart",
+        description: "Order Payment",
+        order_id: data.orderId,
+        handler: async function (response) {
+          await verifyPayment(id, response);
+        },
+        prefill: {
+          name: `${shippingAddress.firstName} ${shippingAddress.lastName}`,
+          email: user?.email,
+          contact: shippingAddress.phone,
+        },
+        notes: {
+          address: shippingAddress.address,
+        },
+        theme: {
+          color: "#65ccb7",
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (error) {
+      console.error("Error creating Razorpay order:", error);
+      toast.error("Error initiating payment. Please try again.");
+    }
   };
 
-  if (loading) return <p>Loading cart...</p>;
-  if (error) return <p>Error: {error}</p>;
+  //Verify Razorpay Payment
+  const verifyPayment = async (id, response) => {
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/checkout/${id}/verify-payment`,
+        {
+          razorpay_order_id: response.razorpay_order_id,
+          razorpay_payment_id: response.razorpay_payment_id,
+          razorpay_signature: response.razorpay_signature,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+          },
+        }
+      );
+
+      // Finalize checkout after successful payment
+      const finalizeResponse = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/checkout/${id}/finalize`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+          },
+        }
+      );
+
+      // Store the final order in localStorage for order confirmation page
+      localStorage.setItem('finalOrder', JSON.stringify(finalizeResponse.data));
+      
+      // Clear cart after successful payment
+      dispatch(clearCart());
+
+      navigate("/order-confirmation");
+    } catch (error) {
+      console.error("Payment verification failed:", error);
+      toast.error("Payment verification failed. Please contact support.");
+    }
+  };
+
+  if (cartLoading) return <p>Loading cart...</p>;
+  if (cartError) return <p>Error: {cartError}</p>;
   if (!cart || !cart.products || cart.products.length === 0) {
-    return <p>Your Cart is emoty</p>;
+    return <p>Your Cart is empty</p>;
   }
 
   return (
@@ -103,10 +190,11 @@ const Checkout = () => {
               className="w-full p-2 border rounded"
               disabled
             />
-            <h3 className="text-lg mb-4">Delivery</h3>
 
+            {/* Delivery Section */}
+            <h3 className="text-lg mb-4">Delivery</h3>
             <div className="mb-4 grid grid-cols-2 gap-4">
-              <div className="">
+              <div>
                 <label className="block text-gray-700">First Name</label>
                 <input
                   type="text"
@@ -121,8 +209,7 @@ const Checkout = () => {
                   required
                 />
               </div>
-
-              <div className="">
+              <div>
                 <label className="block text-gray-700">Last Name</label>
                 <input
                   type="text"
@@ -156,7 +243,7 @@ const Checkout = () => {
             </div>
 
             <div className="mb-4 grid grid-cols-2 gap-4">
-              <div className="">
+              <div>
                 <label className="block text-gray-700">City</label>
                 <input
                   type="text"
@@ -171,8 +258,7 @@ const Checkout = () => {
                   required
                 />
               </div>
-
-              <div className="">
+              <div>
                 <label className="block text-gray-700">Postal Code</label>
                 <input
                   type="text"
@@ -201,6 +287,7 @@ const Checkout = () => {
                   })
                 }
                 className="w-full p-2 border rounded"
+                required
               />
             </div>
 
@@ -221,23 +308,15 @@ const Checkout = () => {
           </div>
 
           <div className="mt-6">
-            {!checkoutId ? (
-              <button
-                type="submit"
-                className="w-full bg-black text-white py-3 rounded"
-              >
-                Continue to Payment
-              </button>
-            ) : (
-              <div>
-                <h3 className="text-lg mb-4">Pay With Paypal</h3>
-                {/* Paypal Component */}
-                {/* <PaypalButton
-                  amount={cart.totalPrice}
-                  onSuccess={handlePaymentSuccess}
-                  onError={(err) => alert("Payment Failed. Try again.")}
-                /> */}
-              </div>
+            <button
+              type="submit"
+              className="w-full bg-black text-white py-3 rounded hover:bg-gray-900 cursor-pointer disabled:opacity-60"
+              disabled={checkoutLoading}
+            >
+              {checkoutLoading ? "Processing..." : "Proceed to Payment"}
+            </button>
+            {checkoutError && (
+              <p className="mt-3 text-sm text-red-600">{checkoutError}</p>
             )}
           </div>
         </form>
@@ -259,18 +338,18 @@ const Checkout = () => {
                   className="w-20 h-24 object-cover mr-4"
                 />
                 <div>
-                  <h3 className="tet-md">{product.name}</h3>
+                  <h3 className="text-md">{product.name}</h3>
                   <p className="text-gray-500">Size: {product.size}</p>
                   <p className="text-gray-500">Color: {product.color}</p>
                 </div>
               </div>
-              <p className="text-xl">${product.price?.toLocaleString()}</p>
+              <p className="text-xl">₹{product.price?.toLocaleString()}</p>
             </div>
           ))}
         </div>
         <div className="flex justify-between items-center text-lg mb-4">
           <p>Subtotal</p>
-          <p>${cart.totalPrice?.toLocaleString()}</p>
+          <p>₹{cart.totalPrice?.toLocaleString()}</p>
         </div>
         <div className="flex justify-between items-center text-lg">
           <p>Shipping</p>
@@ -278,7 +357,7 @@ const Checkout = () => {
         </div>
         <div className="flex justify-between items-center text-lg mt-4 border-t pt-4">
           <p>Total</p>
-          <p>${cart.totalPrice?.toLocaleString()}</p>
+          <p>₹{cart.totalPrice?.toLocaleString()}</p>
         </div>
       </div>
     </div>

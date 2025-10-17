@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import axios from "axios";
 import UserLayout from "./components/Layout/UserLayout";
 import Home from "./pages/Home";
 import { Toaster } from "sonner";
@@ -20,10 +21,40 @@ import OrderManagement from "./components/Admin/OrderManagement";
 
 import { Provider } from "react-redux";
 import store from "./redux/store";
+import { logout } from "./redux/slices/authSlice";
 import ProtectedRoute from "./components/Common/ProtectedRoute";
 import AddProductPage from "./components/Admin/AddProductPage";
 
 const App = () => {
+  // Setup axios interceptors once
+  if (!axios.__INTERCEPTORS_INSTALLED__) {
+    axios.__INTERCEPTORS_INSTALLED__ = true;
+
+    axios.interceptors.request.use((config) => {
+      const token = localStorage.getItem("userToken");
+      if (token) {
+        config.headers = config.headers || {};
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    });
+
+    axios.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        const status = error?.response?.status;
+        if (status === 401 || status === 403) {
+          try { store.dispatch(logout()); } catch {}
+          const redirectPath = encodeURIComponent(window.location.pathname);
+          if (!window.location.pathname.startsWith("/login")) {
+            window.location.href = `/login?redirect=${redirectPath}`;
+          }
+        }
+        return Promise.reject(error);
+      }
+    );
+  }
+
   return (
     <>
       <Provider store={store}>
@@ -32,15 +63,22 @@ const App = () => {
           <Routes>
             <Route path="/" element={<UserLayout />}>
               <Route index element={<Home />} />
+              <Route path="profile" element={<Profile />} />
               <Route path="login" element={<Login />} />
               <Route path="register" element={<Register />} />
-              <Route path="profile" element={<Profile />} />
               <Route
                 path="collections/:collection"
                 element={<CollectionPage />}
               />
               <Route path="product/:id" element={<ProductDetails />} />
-              <Route path="checkout" element={<Checkout />} />
+              <Route
+                path="checkout"
+                element={
+                  <ProtectedRoute>
+                    <Checkout />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="order-confirmation"
                 element={<OrderConfirmationPage />}
@@ -51,7 +89,7 @@ const App = () => {
             <Route
               path="/admin"
               element={
-                <ProtectedRoute role='admin'>
+                <ProtectedRoute role="admin">
                   <AdminLayout />
                 </ProtectedRoute>
               }

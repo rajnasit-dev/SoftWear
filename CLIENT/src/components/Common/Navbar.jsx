@@ -82,7 +82,7 @@ const Navbar = () => {
               )}
 
               {/** User icon */}
-              <Link to={user?.userId ? "/profile" : "/login"}>
+              <Link to={user ? "/profile" : "/login"}>
                 <HiOutlineUser className="h-6 w-6 text-gray-700 hover:text-black" />
               </Link>
               {/** Cart icon */}

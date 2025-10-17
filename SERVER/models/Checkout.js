@@ -84,6 +84,12 @@ const checkoutSchema = new mongoose.Schema(
     finalizedAt: {
       type: Date,
     },
+    razorpayOrderId: {
+      type: String,
+    },
+    razorpayPaymentId: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

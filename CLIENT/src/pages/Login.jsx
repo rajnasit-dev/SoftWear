@@ -5,6 +5,7 @@ import { loginUser } from "../redux/slices/authSlice";
 import { useDispatch } from "react-redux";
 import { mergeCart } from "../redux/slices/cartSlice";
 import { useSelector } from "react-redux";
+import { toast } from "sonner";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -12,7 +13,7 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, guestId, loading } = useSelector((state) => state.auth);
+  const { user, guestId, loading, error } = useSelector((state) => state.auth);
   const { cart } = useSelector((state) => state.cart);
 
   //Get redirect parameter and check if it's checkout or something
@@ -30,6 +31,13 @@ const Login = () => {
       }
     }
   }, [user, guestId, cart, navigate, isCheckoutRedirect, dispatch]);
+
+  // Show toast on wrong credentials or other login errors
+  useEffect(() => {
+    if (error) {
+      toast.error(typeof error === "string" ? error : "Login failed. Check your credentials.");
+    }
+  }, [error]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -74,9 +82,15 @@ const Login = () => {
           <button
             type="submit"
             className="w-full bg-black text-white p-2 rounded-lg font-semibold hover:bg-gray-800 cursor-pointer transition"
+            disabled={loading}
           >
             {loading ? "loading..." : "Sign in"}
           </button>
+          {error && (
+            <p className="mt-3 text-sm text-red-600">
+              {typeof error === "string" ? error : "Invalid email or password."}
+            </p>
+          )}
           <p className="mt-6 text-center text-sm">
             Don't have an account?{" "}
             <Link
