@@ -1,5 +1,8 @@
 # SoftWear- An E-Commerce Website (using MERN Stack)
 
+🚀 **Live Website:** 👉 [https://softwear-rajnasit-dev.vercel.app](https://softwear-rajnasit-dev.vercel.app)
+
+
 ## 📌 Project Description
 This is a full-stack e-commerce website built using the **MERN** stack – MongoDB, Express.js, React.js, and Node.js. Users can browse products, add them to the cart, and complete orders using a payment integration. The project follows best practices and covers both backend and frontend development.
 
@@ -28,9 +31,6 @@ git clone https://github.com/yourusername/SoftWear.git
 cd SoftWear
 
 
-🚀 **Live Website:** 👉 [softwear-rajnasit-dev.vercel.app](softwear-rajnasit-dev.vercel.app)
-
-
 ## 📸 Screenshots
 
 ### 🎨 Project UI Preview
@@ -39,6 +39,6 @@ cd SoftWear
 |:-------------:|:---------------:|:-------------:|
 | ![Home Page](./screenshots/home.png) | ![Product Page](./screenshots/product.png) | ![Cart Page](./screenshots/cart.png) |
 
-| 💳 Checkout Page | 📦 Order Success | 🧑‍💼 Admin Dashboard |
+| 💳 Checkout Page | 🧑‍💼 Profile Page | 🧑‍💼 Admin Dashboard |
 |:----------------:|:----------------:|:--------------------:|
-| ![Checkout](./screenshots/checkout.png) | ![Admin Dashboard](./screenshots/admin-dashboard.png) |
+| ![Checkout](./screenshots/checkout.png) | ![Checkout](./screenshots/profile.png) | ![Admin Dashboard](./screenshots/admin-dashboard.png) |
