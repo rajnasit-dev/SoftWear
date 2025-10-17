@@ -12,3 +12,6 @@ SERVER/.env
 
 # dist 
 CLIENT/dist/
+
+#screenshots
+screenshots/
