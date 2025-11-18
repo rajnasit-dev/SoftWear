@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 import UserLayout from "./components/Layout/UserLayout";
 import Home from "./pages/Home";
@@ -24,6 +26,17 @@ import store from "./redux/store";
 import { logout } from "./redux/slices/authSlice";
 import ProtectedRoute from "./components/Common/ProtectedRoute";
 import AddProductPage from "./components/Admin/AddProductPage";
+
+// Scroll to top component
+const ScrollToTopWrapper = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
+  return null;
+};
 
 const App = () => {
   // Setup axios interceptors once
@@ -59,6 +72,7 @@ const App = () => {
     <>
       <Provider store={store}>
         <BrowserRouter>
+          <ScrollToTopWrapper />
           <Toaster position="top-right" />
           <Routes>
             <Route path="/" element={<UserLayout />}>

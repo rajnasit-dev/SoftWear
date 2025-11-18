@@ -32,7 +32,7 @@ const GenderCollectionSection = () => {
           />
           <div className="absolute bottom-8 left-8 bg-white/90 p-4">
             <h2 className="text-2xl font-bold text-zinc-700 mb-3">
-                Women's Collection
+                Men's Collection
             </h2>
             <Link to="/collections/all?gender=Men" className="text-zinc-800 underline">Shop Now</Link>
           </div>
